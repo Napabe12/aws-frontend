@@ -3,11 +3,190 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema de Autenticación Zero Trust</title>
+  <title>Farmacia Central - Sistema Integral</title>
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <div class="container" id="app"></div>
-  <script type="module" src="js/app.js"></script>
+  <!-- CONTENEDOR DE AUTENTICACIÓN (LOGIN Y REGISTRO) -->
+  <div id="seccion-auth" class="contenedor-centrado">
+    <div class="tarjeta-login">
+      <div class="logo-area">
+        <h2>⚕️ Farmacia Central</h2>
+        <p id="subtitulo-auth">Sistema Integral de Gestión y Control RBAC</p>
+      </div>
+
+      <!-- FORMULARIO DE INICIO DE SESIÓN -->
+      <form id="form-login">
+        <div class="grupo-input">
+          <label>Correo Electrónico:</label>
+          <input type="email" id="email" required placeholder="tu-correo@farmacia.com">
+        </div>
+        <div class="grupo-input">
+          <label>Contraseña:</label>
+          <input type="password" id="password" required placeholder="••••••••">
+        </div>
+        <button type="submit" class="btn-primario">Iniciar Sesión Segura</button>
+
+        <div class="enlace-alternar">
+          <p>¿No tienes cuenta? <a href="#" id="ir-a-registro">Crea un usuario</a></p>
+        </div>
+      </form>
+
+      <!-- FORMULARIO DE REGISTRO DE CUENTA -->
+      <form id="form-registro" class="oculto">
+        <div class="grupo-input">
+          <label>Nombre Completo:</label>
+          <input type="text" id="reg-nombre" required placeholder="Ej. Juan Pérez">
+        </div>
+        <div class="grupo-input">
+          <label>Correo Electrónico:</label>
+          <input type="email" id="reg-email" required placeholder="tu-correo@farmacia.com">
+        </div>
+        <div class="grupo-input">
+          <label>Contraseña:</label>
+          <input type="password" id="reg-pass" required placeholder="Mínimo 8 caracteres">
+        </div>
+        <button type="submit" class="btn-primario">Crear Cuenta</button>
+
+        <div class="enlace-alternar">
+          <p>¿Ya tienes cuenta? <a href="#" id="ir-a-login">Iniciar Sesión</a></p>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- DASHBOARD PRINCIPAL -->
+  <div id="seccion-dashboard" class="contenedor-dashboard oculto">
+    <header class="barra-superior">
+      <div class="marca">
+        <h2>⚕️ Farmacia Central</h2>
+        <span class="badge-servidor">Zero-Trust Active</span>
+      </div>
+      <div class="perfil-usuario">
+        <span id="txt-usuario">Usuario</span>
+        <span id="badge-rol" class="badge-rol">Rol</span>
+        <button id="btn-logout" class="btn-peligro">Cerrar Sesión</button>
+      </div>
+    </header>
+
+    <nav class="nav-modulos">
+      <button class="tab-btn activo" onclick="cambiarTab('inventario')">📦 Inventario de Medicamentos</button>
+      <button id="tab-btn-usuarios" class="tab-btn" onclick="cambiarTab('usuarios')">👥 Gestión de Usuarios (Admin)</button>
+    </nav>
+
+    <!-- INVENTARIO -->
+    <section id="modulo-inventario" class="contenido-tab">
+      <div class="cabecera-modulo">
+        <div>
+          <h3>Catálogo e Inventario de Medicamentos</h3>
+          <p>Control de existencias, precios y prescripción médica.</p>
+        </div>
+        <div id="area-nuevo-med">
+          <form id="form-nuevo-med" class="form-horizontal">
+            <input type="text" id="med-codigo" placeholder="Código (ej. MED-005)" required>
+            <input type="text" id="med-nombre" placeholder="Nombre Comercial" required>
+            <input type="text" id="med-categoria" placeholder="Categoría" required>
+            <input type="number" id="med-stock" placeholder="Stock" min="1" required>
+            <input type="number" id="med-precio" placeholder="Precio ($)" step="0.5" required>
+            <label class="check-receta">
+              <input type="checkbox" id="med-receta"> ¿Requiere Receta?
+            </label>
+            <button type="submit" class="btn-exito">+ Agregar Medicamento</button>
+          </form>
+        </div>
+      </div>
+
+      <table class="tabla-datos">
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Medicamento</th>
+            <th>Categoría</th>
+            <th>Existencia</th>
+            <th>Precio</th>
+            <th>Prescripción</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="lista-medicamentos"></tbody>
+      </table>
+    </section>
+
+    <!-- ADMINISTRACIÓN DE USUARIOS -->
+    <section id="modulo-usuarios" class="contenido-tab oculto">
+      <div class="cabecera-modulo">
+        <div>
+          <h3>Gestión de Usuarios y Roles (Módulo Administrativo)</h3>
+          <p>Control de acceso basado en roles (RBAC) con persistencia y hash bcrypt.</p>
+        </div>
+      </div>
+
+      <div class="grid-admin">
+        <div class="tarjeta-formulario">
+          <h4>Crear Nuevo Usuario</h4>
+          <form id="form-nuevo-usuario">
+            <div class="grupo-input">
+              <label>Nombre:</label>
+              <input type="text" id="usr-nombre" required placeholder="Nombre completo">
+            </div>
+            <div class="grupo-input">
+              <label>Correo Electrónico:</label>
+              <input type="email" id="usr-email" required placeholder="usuario@farmacia.com">
+            </div>
+            <div class="grupo-input">
+              <label>Contraseña:</label>
+              <input type="password" id="usr-pass" required placeholder="Mínimo 8 caracteres">
+            </div>
+            <div class="grupo-input">
+              <label>Rol Asignado:</label>
+              <select id="usr-rol" required>
+                <option value="cliente">Cliente (Solo Consulta)</option>
+                <option value="farmaceutico">Farmacéutico (Inventario)</option>
+                <option value="admin">Administrador (Total)</option>
+              </select>
+            </div>
+            <button type="submit" class="btn-primario">Registrar Usuario</button>
+          </form>
+        </div>
+
+        <div class="tarjeta-tabla">
+          <h4>Cuentas Activas</h4>
+          <table class="tabla-datos">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Rol</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody id="lista-usuarios"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- MODAL DE CONFIRMACIÓN -->
+  <div id="modal-confirm" class="overlay-modal oculto">
+    <div class="tarjeta-modal">
+      <div class="icono-modal-peligro">⚠️</div>
+      <h3 id="modal-titulo">¿Confirmar Acción?</h3>
+      <p id="modal-mensaje">Esta operación no se puede deshacer.</p>
+      <div class="botones-modal">
+        <button id="btn-modal-cancelar" class="btn-secundario">Cancelar</button>
+        <button id="btn-modal-confirmar" class="btn-peligro">Sí, Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTIFICACIÓN TOAST -->
+  <div id="toast-notificacion" class="toast-alerta oculto">
+    <span class="icono-toast">✅</span>
+    <span id="toast-mensaje">Eliminado con éxito</span>
+  </div>
+
+  <script src="js/app.js"></script>
 </body>
 </html>
